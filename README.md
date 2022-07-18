@@ -1,9 +1,13 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/anzhi0708/dearAJ/main/img/logo.png" />
+</div>
+
 # dearAJ
 
 Data analysis tool for Korean National Assembly
 
 - [Installation](https://github.com/anzhi0708/dearAJ#install)
-- Usage
+- [Usage](https://github.com/anzhi0708/dearAJ#usage)
   - [Conference](https://github.com/anzhi0708/dearAJ#conferences)
   - [Conferences](https://github.com/anzhi0708/dearAJ#conferences)
   - [MP](https://github.com/anzhi0708/dearAJ#mplist)
@@ -16,7 +20,7 @@ Data analysis tool for Korean National Assembly
 ```bash
 pip3 install dearaj
 ```
-
+or
 ```bash
 git clone https://github.com/anzhi0708/dearAJ
 cd dearAJ
@@ -60,7 +64,7 @@ Conference(sami='1', angun_type=[], minutes='1', ct1='19', ct2='342', ct3='01', 
 
 ### get_conferences_of
 
-The crawler class. Use get_conferences_of(nth, save=True) to save JSON data to csv files.
+The crawler class. Use `get_conferences_of(nth, save=True)` to save JSON data to csv files.
 
 ## License
 
