@@ -1,5 +1,13 @@
 <div align="center">
+
   <img src="https://raw.githubusercontent.com/anzhi0708/dearAJ/main/img/logo.png" />
+
+</div>
+
+<div align="center">
+
+  [![last-commit](https://img.shields.io/github/last-commit/anzhi0708/dearAJ?style=social)] [![pypi-version](https://img.shields.io/pypi/v/dearaj?color=black&style=flat-square)] [![license](https://img.shields.io/github/license/anzhi0708/dearAJ?color=black&style=flat-square)] [![repo-size](https://img.shields.io/github/repo-size/anzhi0708/dearAJ?style=social)]
+
 </div>
 
 # dearAJ
