@@ -1,11 +1,12 @@
 from .ajcore import *
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 __all__ = [
     "CONFIG_FILE_DIR",
     "PACKAGE_ABS_DIR",
     "DATA_FILES_PATH",
+    "CONGRESSMAN_DIR",
     "GEN_PERIOD_DICT",
     "get_start_of",
     "get_end_of",
@@ -19,4 +20,6 @@ __all__ = [
     "get_conf_pdf",
     "Conference",
     "Conferences",
+    "MP",
+    "MPList",
 ]
