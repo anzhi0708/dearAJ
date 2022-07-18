@@ -112,6 +112,27 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
 
 
 @dataclass
+class Speak:
+    """Dictionaries in 'subList'"""
+    real_time: Optional[str]
+    play_time: str
+    speak_type: str
+    no: int
+    movie_title: str
+    wv: int
+
+
+@dataclass
+class Movie:
+    """Dictionaries in 'movieList'"""
+    real_time: Optional[str]
+    play_time: str
+    speak_type: str
+    no: int
+    sublist: List[dict]
+
+
+@dataclass
 class Conference:
     __slots__ = (
         "sami",
@@ -161,6 +182,10 @@ class Conference:
     @property
     def pdf(self) -> Optional[bytes]:
         return get_conf_pdf(self)
+
+    def save_pdf_to(self, path: str) -> None:
+        with open(f"{path}", "wb") as output:
+            output.write(self.pdf)
 
     def as_json(self) -> str:
         import json
@@ -532,3 +557,5 @@ class MPList:
 
     def __iter__(self):
         return iter(self.members)
+
+
