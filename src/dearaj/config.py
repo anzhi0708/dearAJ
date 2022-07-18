@@ -1,7 +1,37 @@
+"""
+This module defines
+
+  - Widely used consts of mappings and paths, such as
+    + GEN_PERIOD_DICT
+    + PACKAGE_ABS_DIR
+    + DATA_FILES_PATH
+
+  - Basic low-level functions, such as
+    + get_conf_file_info(conf)
+    + get_conf_movie_info(conf)
+    + get_conf_pdf(conf)
+    + get_conf_vod_link(conf)
+    + get_vod_chunks(conf)
+
+  - Basic data structures / classes for the library, such as
+    + Conference
+    + Conferences
+
+  - The main crawler(s)
+    + get_conferences_of(
+        nth: int,
+        save: bool,
+        to: str,
+        sleep: Union[int, float]
+      )
+    + get_normal_page_of(nth: int, page: int)
+
+"""
 import pathlib
-from typing import List, Union
+from typing import List, Union, Optional
 from dataclasses import dataclass
 import time
+from faker import Faker
 
 CONFIG_FILE_DIR: pathlib.Path = pathlib.Path(__file__)
 PACKAGE_ABS_DIR: pathlib.Path = CONFIG_FILE_DIR.parent
@@ -65,7 +95,15 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
     import requests
     import json
 
-    return json.loads(requests.get(url).text)
+    return json.loads(
+        requests.get(
+            url,
+            headers={
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "User-Agent": Faker().user_agent(),
+            },
+        ).text
+    )
 
 
 @dataclass
@@ -99,7 +137,27 @@ class Conference:
     comm_name: str
     qvod: int
 
-    def to_json(self) -> str:
+    @property
+    def vod_link(self) -> str:
+        return get_conf_vod_link(self)
+
+    @property
+    def movie_list(self) -> list:
+        return get_conf_vod_chunks(self)
+
+    @property
+    def movie_sublist(self) -> list:
+        result: list = []
+        for movie in self.movie_list:
+            for chunk in movie["subList"]:
+                result.append(chunk)
+        return result
+
+    @property
+    def pdf(self) -> Optional[bytes]:
+        return get_conf_pdf(self)
+
+    def as_json(self) -> str:
         import json
 
         return json.dumps(
@@ -181,7 +239,7 @@ class get_conferences_of:
 
                 with open(write_dir, "a+", encoding="UTF-8") as output_fp:
                     writer = csv.writer(output_fp)
-                    writer.writerow([current_conference.to_json()])
+                    writer.writerow([current_conference.as_json()])
         time.sleep(sleep)
         for page_index in range(2, self.last_page + 1):
             current_page: dict = get_normal_page_of(nth, page_index)
@@ -210,7 +268,7 @@ class get_conferences_of:
 
                     with open(write_dir, "a+", encoding="UTF-8") as output_fp:
                         writer = csv.writer(output_fp)
-                        writer.writerow([current_conference.to_json()])
+                        writer.writerow([current_conference.as_json()])
             time.sleep(sleep)
 
 
@@ -268,7 +326,15 @@ def get_conf_movie_info(conf: Conference) -> dict:
     import json
     import requests
 
-    return json.loads(requests.get(movie_info_link).text)
+    return json.loads(
+        requests.get(
+            movie_info_link,
+            headers={
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "User-Agent": Faker().user_agent(),
+            },
+        ).text
+    )
 
 
 def get_conf_file_info(conf: Conference) -> dict:
@@ -278,10 +344,22 @@ def get_conf_file_info(conf: Conference) -> dict:
     import json
     import requests
 
-    return json.loads(requests.get(file_info_link).text)
+    return json.loads(
+        requests.get(
+            file_info_link,
+            headers={
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "User-Agent": Faker().user_agent(),
+            },
+        ).text
+    )
 
 
-def get_conf_pdf(conf: Conference) -> Union[None, bytes]:
+def get_conf_vod_chunks(conf: Conference) -> list:
+    return get_conf_movie_info(conf)["movieList"]
+
+
+def get_conf_pdf(conf: Conference) -> Optional[bytes]:
     """
     Get PDF **bytes** using http request. Returns None if PDF file not available.
     Use open(<path_to_new_file>, "wb").write(get_conf_pdf(<conf>)) to save the PDF file.
@@ -324,6 +402,10 @@ def get_conf_pdf(conf: Conference) -> Union[None, bytes]:
             "enctype": "multipart/form-data",
             "conferNum": confer_num,
             "fileId": pdf_file_id,
+        },
+        headers={
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "User-Agent": Faker().user_agent(),
         },
     )
     # # # # # # # # # # # #

@@ -1,3 +1,6 @@
+commit:
+	git commit -a
+	git push -u origin main
 format:
 	black src/dearaj/*.py
 clean:
