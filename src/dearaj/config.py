@@ -70,6 +70,21 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
 
 @dataclass
 class Conference:
+    __slots__ = (
+        "sami",
+        "angun_type",
+        "minutes",
+        "ct1",
+        "ct2",
+        "ct3",
+        "open_time",
+        "date",
+        "hand_lang",
+        "mc",
+        "conf_title",
+        "comm_name",
+        "qvod",
+    )
     sami: str
     angun_type: list
     minutes: str
@@ -241,6 +256,9 @@ class Conferences:
     def __iter__(self):
         return iter(self.conferences)
 
+    def __getitem__(self, val):
+        return self.conferences.__getitem__(val)
+
     def __repr__(self):
         return f"<{'Empty ' + self.__class__.__name__ + ' of ' + str(self.generation) + suffix_of(self.generation) if self.conferences == [] else self.__class__.__name__ + ' of ' + str(self.generation) + suffix_of(self.generation) + ', total: ' + str(len(self.conferences))}>"
 
@@ -251,3 +269,64 @@ def get_conf_movie_info(conf: Conference) -> dict:
     import requests
 
     return json.loads(requests.get(movie_info_link).text)
+
+
+def get_conf_file_info(conf: Conference) -> dict:
+    conf_movie_info: dict = get_conf_movie_info(conf)
+    parent_chunk: dict = conf_movie_info["movieList"][0]
+    file_info_link: str = f"https://w3.assembly.go.kr/main/service/movie.do?cmd=fileInfo&mc={conf_movie_info['mc']}&ct1={conf_movie_info['ct1']}&ct2={conf_movie_info['ct2']}&ct3={conf_movie_info['ct3']}&no={parent_chunk['no']}&wv=1&xreferer=&vv={int(time.time())}&"
+    import json
+    import requests
+
+    return json.loads(requests.get(file_info_link).text)
+
+
+def get_conf_pdf(conf: Conference) -> Union[None, bytes]:
+    """
+    Get PDF **bytes** using http request. Returns None if PDF file not available.
+    Use open(<path_to_new_file>, "wb").write(get_conf_pdf(<conf>)) to save the PDF file.
+    """
+    action: str = "http://likms.assembly.go.kr/record/mhs-10-040-0040.do"
+    movie_info: dict = get_conf_movie_info(conf)
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    # unlike 'ct1' to 'ct3', 'minutes' have different types under different situations (pages)  #
+    # sometimes 'minutes' is a link, sometimes it's a number                                    #
+    # for this kind of requested page, 'minutes' are links                                      #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    if movie_info["minutes"] == "":
+        # # # # # # # # # # # # # # # # # # #
+        # if no PDF available, return None  #
+        # # # # # # # # # # # # # # # # # # #
+        return
+    import re
+
+    print(movie_info["minutes"])
+    confer_num: str = (
+        re.search(r"conferNum=[^&]*", movie_info["minutes"])
+        .group(0)
+        .replace("conferNum=", "")
+    )
+    pdf_file_id: str = (
+        re.search(r"pdfFileId=[^&]*", movie_info["minutes"])
+        .group(0)
+        .replace("pdfFileId=", "")
+    )
+
+    import requests
+
+    # # # # # # # # # # #
+    # HTTP POST method  #
+    # # # # # # # # # # #
+    respond = requests.post(
+        action,
+        data={
+            "target": "I_TARGET",
+            "enctype": "multipart/form-data",
+            "conferNum": confer_num,
+            "fileId": pdf_file_id,
+        },
+    )
+    # # # # # # # # # # # #
+    # returns binary data #
+    # # # # # # # # # # # #
+    return respond.content
