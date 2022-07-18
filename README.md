@@ -15,7 +15,7 @@
 
 # dearAJ
 
-Data analysis tool for Korean National Assembly
+**Data analysis tool for Korean National Assembly**
 
 - [Installation](https://github.com/anzhi0708/dearAJ#install)
 - [Usage](https://github.com/anzhi0708/dearAJ#usage)
