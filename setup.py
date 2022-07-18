@@ -25,6 +25,7 @@ setuptools.setup(
     url="https://github.com/anzhi0708/dearAJ",
     packages=setuptools.find_packages("src"),
     package_dir={"": "src"},
+    include_package_data=True,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3.6",
