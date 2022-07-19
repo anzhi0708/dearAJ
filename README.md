@@ -19,8 +19,8 @@
 
 - [Installation](https://github.com/anzhi0708/dearAJ#install)
 - [Usage](https://github.com/anzhi0708/dearAJ#usage)
-  - [Speak]
-  - [Movie]
+  - Speak
+  - Movie
   - [Conference](https://github.com/anzhi0708/dearAJ#conferences)
   - [Conferences](https://github.com/anzhi0708/dearAJ#conferences)
   - [MP](https://github.com/anzhi0708/dearAJ#mplist)
