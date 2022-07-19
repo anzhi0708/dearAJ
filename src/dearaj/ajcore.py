@@ -149,12 +149,12 @@ class Conference:
         return get_conf_movie_info(self)
 
     def get_confer_num_and_pdf_file_id(self) -> Tuple[str, str]:
-        minutes_info: dict = self.get_movie_info()["minutes"]
-        if minutes_info == "":
+        pdf_link: Optional[str] = get_conf_pdf_link(self)
+        if pdf_link in ("", None):
             from sys import stderr
 
             print(
-                f"This conference\n{self.conf_title}\nhas no valid PDF link, check this link\n{self.vod_link}\nfor more information.\n",
+                f"This conference:\n{self.conf_title}\nhas no valid PDF link, check its link:\n{self.vod_link}\nfor more information.\n",
                 file=stderr,
             )
             return ("", "")
@@ -162,7 +162,7 @@ class Conference:
 
         try:
             confer_num: str = (
-                re.search(r"conferNum=[^&]*", minutes_info)
+                re.search(r"conferNum=[^&]*", pdf_link)
                 .group(0)
                 .replace("conferNum=", "")
             )
@@ -171,12 +171,12 @@ class Conference:
             from sys import stderr
 
             print(
-                f"confer number not found\n{self.conf_title}\nhas no valid confer number, check this link\n{self.vod_link}\nfor details.\n",
+                f"confer number not found\n{self.conf_title}\n{pdf_link}\nhas no valid confer number, check its link\n{self.vod_link}\nfor details.\n",
                 file=stderr,
             )
         try:
             pdf_file_id: str = (
-                re.search(r"pdfFileId=[^&]*", minutes_info)
+                re.search(r"pdfFileId=[^&]*", pdf_link)
                 .group(0)
                 .replace("pdfFileId=", "")
             )
@@ -185,7 +185,7 @@ class Conference:
             from sys import stderr
 
             print(
-                f"pdf id not found\n{self.conf_title}\nhas no valid pdf ID, check this link\n{self.vod_link}\nfor details.\n",
+                f"pdf id not found\n{self.conf_title}\n{pdf_link}\nhas no valid pdf ID, check its link\n{self.vod_link}\nfor details.\n",
                 file=stderr,
             )
         return (confer_num, pdf_file_id)
@@ -457,35 +457,40 @@ def get_conf_vod_chunks(conf: Conference) -> List[Movie]:
     ]
 
 
+def get_conf_pdf_link(conf: Conference) -> Optional[str]:
+    movie_info: dict = get_conf_movie_info(conf)
+    pdf_link: str = movie_info["minutes"]
+    return pdf_link
+
+
 def get_conf_pdf(conf: Conference) -> Optional[bytes]:
     """
-    Get PDF **bytes** using http request. Returns None if PDF file not available.
-    Use open(<path_to_new_file>, "wb").write(get_conf_pdf(<conf>)) to save the PDF file.
+    Gets PDF bytes.
+    Returns None if PDF file not available.
     """
     action: str = "http://likms.assembly.go.kr/record/mhs-10-040-0040.do"
-    movie_info: dict = get_conf_movie_info(conf)
+    pdf_link: str = get_conf_pdf_link(conf)
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # unlike 'ct1' to 'ct3', 'minutes' have different types under different #
     # situations(pages), sometimes 'minutes' is a link, sometimes it's a    #
     # number. for this kind of requested page, 'minutes' are links          #
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    if movie_info["minutes"] == "":
+    if pdf_link == "":
         # # # # # # # # # # # # # # # # # # #
         # if no PDF available, return None  #
         # # # # # # # # # # # # # # # # # # #
+        from sys import stderr
+
+        print(f"valid pdf link not found in\n{conf.conf_title}\n", file=stderr)
         return None
     import re
 
-    print(movie_info["minutes"])
+    print(pdf_link)
     confer_num: str = (
-        re.search(r"conferNum=[^&]*", movie_info["minutes"])
-        .group(0)
-        .replace("conferNum=", "")
+        re.search(r"conferNum=[^&]*", pdf_link).group(0).replace("conferNum=", "")
     )
     pdf_file_id: str = (
-        re.search(r"pdfFileId=[^&]*", movie_info["minutes"])
-        .group(0)
-        .replace("pdfFileId=", "")
+        re.search(r"pdfFileId=[^&]*", pdf_link).group(0).replace("pdfFileId=", "")
     )
 
     import requests
