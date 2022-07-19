@@ -19,19 +19,19 @@
 
 - [Installation](https://github.com/anzhi0708/dearAJ#install)
 - [Usage](https://github.com/anzhi0708/dearAJ#usage)
-  - fn &nbsp;&nbsp;&nbsp;&nbsp;get_normal_page_of
-  - fn &nbsp;&nbsp;&nbsp;&nbsp;get_conf_vod_link
-  - fn &nbsp;&nbsp;&nbsp;&nbsp;get_conf_movie_info
-  - fn &nbsp;&nbsp;&nbsp;&nbsp;get_conf_file_info
-  - fn &nbsp;&nbsp;&nbsp;&nbsp;get_conf_vod_chunks
-  - fn &nbsp;&nbsp;&nbsp;&nbsp;get_conf_pdf
-  - fn &nbsp;&nbsp;&nbsp;&nbsp;[get_conferences_of](https://github.com/anzhi0708/dearAJ#get_conferences_of)(nth: int, save: bool, to: str, sleep: Union[float, int])
-  - cls &nbsp;&nbsp;&nbsp;[Speak](https://github.com/anzhi0708/dearAJ#speak)
-  - cls &nbsp;&nbsp;&nbsp;[Movie](https://github.com/anzhi0708/dearAJ#movie)
-  - cls &nbsp;&nbsp;&nbsp;[Conference](https://github.com/anzhi0708/dearAJ#conferences)
-  - cls &nbsp;&nbsp;&nbsp;[Conferences](https://github.com/anzhi0708/dearAJ#conferences)
-  - cls &nbsp;&nbsp;&nbsp;[MP](https://github.com/anzhi0708/dearAJ#mplist)
-  - cls &nbsp;&nbsp;&nbsp;[MPList](https://github.com/anzhi0708/dearAJ#mplist)
+  - fn&nbsp;&nbsp;&nbsp;&nbsp;get_normal_page_of
+  - fn&nbsp;&nbsp;&nbsp;&nbsp;get_conf_vod_link
+  - fn&nbsp;&nbsp;&nbsp;&nbsp;get_conf_movie_info
+  - fn&nbsp;&nbsp;&nbsp;&nbsp;get_conf_file_info
+  - fn&nbsp;&nbsp;&nbsp;&nbsp;get_conf_vod_chunks
+  - fn&nbsp;&nbsp;&nbsp;&nbsp;get_conf_pdf
+  - fn&nbsp;&nbsp;&nbsp;&nbsp;[get_conferences_of](https://github.com/anzhi0708/dearAJ#get_conferences_of)(nth: int, save: bool, to: str, sleep: Union[float, int])
+  - cls&nbsp;&nbsp;&nbsp;[Speak](https://github.com/anzhi0708/dearAJ#speak)
+  - cls&nbsp;&nbsp;&nbsp;[Movie](https://github.com/anzhi0708/dearAJ#movie)
+  - cls&nbsp;&nbsp;&nbsp;[Conference](https://github.com/anzhi0708/dearAJ#conferences)
+  - cls&nbsp;&nbsp;&nbsp;[Conferences](https://github.com/anzhi0708/dearAJ#conferences)
+  - cls&nbsp;&nbsp;&nbsp;[MP](https://github.com/anzhi0708/dearAJ#mplist)
+  - cls&nbsp;&nbsp;&nbsp;[MPList](https://github.com/anzhi0708/dearAJ#mplist)
 - [License](https://github.com/anzhi0708/dearAJ#license)
 
 ## Install
