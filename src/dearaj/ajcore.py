@@ -11,6 +11,7 @@ from faker import Faker
 CONFIG_FILE_DIR: pathlib.Path = pathlib.Path(__file__)
 PACKAGE_ABS_DIR: pathlib.Path = CONFIG_FILE_DIR.parent
 DATA_FILES_PATH: pathlib.Path = PACKAGE_ABS_DIR / "data"
+LOCAL_DATA_PATH: pathlib.Path = PACKAGE_ABS_DIR / "local"
 CONGRESSMAN_DIR: pathlib.Path = DATA_FILES_PATH / "congressman_list"
 
 
@@ -86,6 +87,14 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
     )
 
 
+class ConferNumError(Exception):
+    pass
+
+
+class PdfFileIdError(Exception):
+    pass
+
+
 @dataclass
 class Speak:
     """Dictionaries in 'subList'"""
@@ -97,6 +106,21 @@ class Speak:
     movie_title: str
     wv: int
 
+    @property
+    def as_json(self) -> str:
+        import json
+
+        return json.dumps(
+            {
+                "real_time": self.real_time,
+                "play_time": self.play_time,
+                "speak_type": self.speak_type,
+                "no": self.no,
+                "movie_title": self.movie_title,
+                "wv": self.wv,
+            }
+        )
+
 
 @dataclass
 class Movie:
@@ -107,6 +131,20 @@ class Movie:
     speak_type: str
     no: int
     sublist: List[dict]
+
+    @property
+    def as_json(self) -> str:
+        import json
+
+        return json.dumps(
+            {
+                "real_time": self.real_time,
+                "play_time": self.play_time,
+                "speak_type": self.speak_type,
+                "no": self.no,
+                "sublist": self.sublist,
+            }
+        )
 
 
 @dataclass
@@ -201,7 +239,7 @@ class Conference:
         return self.get_confer_num_and_pdf_file_id()[1]
 
     def get_movie_list(self) -> List[Movie]:
-        return get_conf_vod_chunks(self)
+        return get_conf_movies(self)
 
     @property
     def movies(self) -> List[Movie]:
@@ -211,15 +249,17 @@ class Conference:
     def get_movie_sublist(self) -> List[Speak]:
         result: List[Speak] = []
         for movie in self.get_movie_list():
-            for chunk in movie.sublist:
+            if movie.sublist in ([], "", None):
+                return []
+            for speak in movie.sublist:
                 result.append(
                     Speak(
-                        chunk["realTime"],
-                        chunk["playTime"],
-                        chunk["speakType"],
-                        chunk["no"],
-                        chunk["movieTitle"],
-                        chunk["wv"],
+                        speak["realTime"],
+                        speak["playTime"],
+                        speak["speakType"],
+                        speak["no"],
+                        speak["movieTitle"],
+                        speak["wv"],
                     )
                 )
         return result
@@ -237,6 +277,7 @@ class Conference:
         with open(f"{path}", "wb") as output:
             output.write(self.pdf)
 
+    @property
     def as_json(self) -> str:
         import json
 
@@ -257,6 +298,23 @@ class Conference:
                 "qvod": self.qvod,
             }
         )
+
+    @property
+    def as_original_raw_json_data(self) -> str:
+        import json
+
+        return json.dumps(get_conf_movie_info(self))
+
+    def to_csv_from_original_raw_json_data(self) -> None:
+        import csv
+
+        with open(
+            LOCAL_DATA_PATH
+            / f"{self.ct1}.{self.ct2}.{self.ct3}_{len(self.movies)}movies_mc={self.mc}.csv",
+            "w",
+        ) as output:
+            writer = csv.writer(output)
+            writer.writerow([self.as_original_raw_json_data])
 
 
 def get_conf_vod_link(conf: Conference) -> str:
@@ -327,7 +385,7 @@ class get_conferences_of:
 
                 with open(write_dir, "a+", encoding="UTF-8") as output_fp:
                     writer = csv.writer(output_fp)
-                    writer.writerow([current_conference.as_json()])
+                    writer.writerow([current_conference.as_json])
         time.sleep(sleep)
         for page_index in range(2, self.last_page + 1):
             current_page: dict = get_normal_page_of(nth, page_index)
@@ -356,7 +414,7 @@ class get_conferences_of:
 
                     with open(write_dir, "a+", encoding="UTF-8") as output_fp:
                         writer = csv.writer(output_fp)
-                        writer.writerow([current_conference.as_json()])
+                        writer.writerow([current_conference.as_json])
             time.sleep(sleep)
 
 
@@ -427,8 +485,8 @@ def get_conf_movie_info(conf: Conference) -> dict:
 
 def get_conf_file_info(conf: Conference) -> dict:
     conf_movie_info: dict = get_conf_movie_info(conf)
-    parent_chunk: dict = conf_movie_info["movieList"][0]
-    file_info_link: str = f"https://w3.assembly.go.kr/main/service/movie.do?cmd=fileInfo&mc={conf_movie_info['mc']}&ct1={conf_movie_info['ct1']}&ct2={conf_movie_info['ct2']}&ct3={conf_movie_info['ct3']}&no={parent_chunk['no']}&wv=1&xreferer=&vv={int(time.time())}&"
+    parent_movie: dict = conf_movie_info["movieList"][0]
+    file_info_link: str = f"https://w3.assembly.go.kr/main/service/movie.do?cmd=fileInfo&mc={conf_movie_info['mc']}&ct1={conf_movie_info['ct1']}&ct2={conf_movie_info['ct2']}&ct3={conf_movie_info['ct3']}&no={parent_movie['no']}&wv=1&xreferer=&vv={int(time.time())}&"
     import json
     import requests
 
@@ -443,18 +501,25 @@ def get_conf_file_info(conf: Conference) -> dict:
     )
 
 
-def get_conf_vod_chunks(conf: Conference) -> List[Movie]:
+def get_conf_movies(conf: Conference) -> List[Movie]:
     movie_list: list = get_conf_movie_info(conf)["movieList"]
-    return [
-        Movie(
-            movie["realTime"],
-            movie["playTime"],
-            movie["speakType"],
-            movie["no"],
-            movie["subList"],
+    result: List[Movie] = []
+    for movie in movie_list:
+        real_time: Optional[str] = movie.get("realTime")
+        play_time: str = movie.get("playTime")
+        speak_type: str = movie.get("speakType")
+        no: int = movie.get("no")
+        sublist: Optional[List[dict]] = movie.get("subList")
+        result.append(
+            Movie(
+                real_time,
+                play_time,
+                speak_type,
+                no,
+                sublist,
+            )
         )
-        for movie in movie_list
-    ]
+    return result
 
 
 def get_conf_pdf_link(conf: Conference) -> Optional[str]:
