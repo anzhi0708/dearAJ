@@ -194,19 +194,33 @@ class Conference:
             .replace("pdfFileId=", "")
         )
 
-    @property
-    def movie_list(self) -> list:
-        """It's actually a method"""
+    def get_movie_list(self) -> List[Movie]:
         return get_conf_vod_chunks(self)
 
     @property
-    def movie_sublist(self) -> list:
-        """It's actually a method"""
-        result: list = []
-        for movie in self.movie_list:
-            for chunk in movie["subList"]:
-                result.append(chunk)
+    def movies(self) -> List[Movie]:
+        """This is actually a sweet function"""
+        return self.get_movie_list()
+
+    def get_movie_sublist(self) -> List[Speak]:
+        result: List[Speak] = []
+        for movie in self.get_movie_list():
+            for chunk in movie.sublist:
+                result.append(
+                    Speak(
+                        chunk["realTime"],
+                        chunk["playTime"],
+                        chunk["speakType"],
+                        chunk["no"],
+                        chunk["movieTitle"],
+                        chunk["wv"],
+                    )
+                )
         return result
+
+    @property
+    def speaks(self) -> List[Speak]:
+        return self.get_movie_sublist()
 
     @property
     def pdf(self) -> Optional[bytes]:
@@ -423,8 +437,18 @@ def get_conf_file_info(conf: Conference) -> dict:
     )
 
 
-def get_conf_vod_chunks(conf: Conference) -> list:
-    return get_conf_movie_info(conf)["movieList"]
+def get_conf_vod_chunks(conf: Conference) -> List[Movie]:
+    movie_list: list = get_conf_movie_info(conf)["movieList"]
+    return [
+        Movie(
+            movie["realTime"],
+            movie["playTime"],
+            movie["speakType"],
+            movie["no"],
+            movie["subList"],
+        )
+        for movie in movie_list
+    ]
 
 
 def get_conf_pdf(conf: Conference) -> Optional[bytes]:
@@ -434,11 +458,11 @@ def get_conf_pdf(conf: Conference) -> Optional[bytes]:
     """
     action: str = "http://likms.assembly.go.kr/record/mhs-10-040-0040.do"
     movie_info: dict = get_conf_movie_info(conf)
-    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    # unlike 'ct1' to 'ct3', 'minutes' have different types under different situations (pages)  #
-    # sometimes 'minutes' is a link, sometimes it's a number                                    #
-    # for this kind of requested page, 'minutes' are links                                      #
-    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    # unlike 'ct1' to 'ct3', 'minutes' have different types under different #
+    # situations(pages), sometimes 'minutes' is a link, sometimes it's a    #
+    # number. for this kind of requested page, 'minutes' are links          #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     if movie_info["minutes"] == "":
         # # # # # # # # # # # # # # # # # # #
         # if no PDF available, return None  #

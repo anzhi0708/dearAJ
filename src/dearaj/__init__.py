@@ -1,6 +1,6 @@
 from .ajcore import *
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 __all__ = [
     "CONFIG_FILE_DIR",
@@ -22,4 +22,6 @@ __all__ = [
     "Conferences",
     "MP",
     "MPList",
+    "Movie",
+    "Speak",
 ]
