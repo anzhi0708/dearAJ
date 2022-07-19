@@ -93,7 +93,7 @@ A `Movie` object contains multuple `Speak`s, and other meta info. Sometimes a si
 <div align="center">
 
   <img src="https://raw.githubusercontent.com/anzhi0708/dearAJ/main/img/actual_kr_conf_site_page.png" />
-  *A `Movie` contains multiple `Speak`s.*
+  A 'Movie' object contains multiple 'Speak' objects.
 
 </div>
 
