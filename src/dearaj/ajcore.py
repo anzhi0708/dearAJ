@@ -35,6 +35,26 @@ GEN_PERIOD_DICT: dict = {
 }
 
 
+class GetConfMovieInfoError(Exception):
+    pass
+
+
+class ConfMovieInfoIsNone(GetConfMovieInfoError):
+    pass
+
+
+class ConfMovieInfoIsEmptyString(GetConfMovieInfoError):
+    pass
+
+
+class ConferNumError(Exception):
+    pass
+
+
+class PdfFileIdError(Exception):
+    pass
+
+
 def get_start_of(nth: int) -> str:
     return GEN_PERIOD_DICT[nth][0]
 
@@ -85,14 +105,6 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
             },
         ).text
     )
-
-
-class ConferNumError(Exception):
-    pass
-
-
-class PdfFileIdError(Exception):
-    pass
 
 
 @dataclass
@@ -192,7 +204,7 @@ class Conference:
             from sys import stderr
 
             print(
-                f"This conference:\n{self.conf_title}\nhas no valid PDF link, check its link:\n{self.vod_link}\nfor more information.\n",
+                f"This conference:\n{self.conf_title!r}\nhas no valid PDF link, check its link:\n{self.vod_link!r}\nfor more information.\n",
                 file=stderr,
             )
             return ("", "")
@@ -209,7 +221,7 @@ class Conference:
             from sys import stderr
 
             print(
-                f"confer number not found\n{self.conf_title}\n{pdf_link}\nhas no valid confer number, check its link\n{self.vod_link}\nfor details.\n",
+                f"confer number not found\n{self.conf_title!r}\n{pdf_link!r}\nhas no valid confer number, check its link\n{self.vod_link!r}\nfor details.\n",
                 file=stderr,
             )
         try:
@@ -223,7 +235,7 @@ class Conference:
             from sys import stderr
 
             print(
-                f"pdf id not found\n{self.conf_title}\n{pdf_link}\nhas no valid pdf ID, check its link\n{self.vod_link}\nfor details.\n",
+                f"pdf id not found\n{self.conf_title!r}\n{pdf_link!r}\nhas no valid pdf ID, check its link\n{self.vod_link!r}\nfor details.\n",
                 file=stderr,
             )
         return (confer_num, pdf_file_id)
@@ -472,15 +484,20 @@ def get_conf_movie_info(conf: Conference) -> dict:
     import json
     import requests
 
-    return json.loads(
-        requests.get(
-            movie_info_link,
-            headers={
-                "Accept": "application/json, text/javascript, */*; q=0.01",
-                "User-Agent": Faker().user_agent(),
-            },
-        ).text
-    )
+    received_json_string: str = requests.get(
+        movie_info_link,
+        headers={
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "User-Agent": Faker().user_agent(),
+        },
+    ).text
+
+    if received_json_string is None:
+        raise ConfMovieInfoIsNone
+    if received_json_string == "":
+        raise ConfMovieInfoIsEmptyString
+
+    return json.loads(received_json_string)
 
 
 def get_conf_file_info(conf: Conference) -> dict:
