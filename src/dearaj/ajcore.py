@@ -1,34 +1,9 @@
 """
-This module defines
-
-  - Widely used consts of mappings and paths, such as
-    + GEN_PERIOD_DICT
-    + PACKAGE_ABS_DIR
-    + DATA_FILES_PATH
-
-  - Basic low-level functions, such as
-    + get_conf_file_info(conf)
-    + get_conf_movie_info(conf)
-    + get_conf_pdf(conf)
-    + get_conf_vod_link(conf)
-    + get_vod_chunks(conf)
-
-  - Basic data structures / classes for the library, such as
-    + Conference
-    + Conferences
-
-  - The main crawler(s)
-    + get_conferences_of(
-        nth: int,
-        save: bool,
-        to: str,
-        sleep: Union[int, float]
-      )
-    + get_normal_page_of(nth: int, page: int)
-
+This core module provides basic wrapping / crawling functions and classes.
+It also defines important global variables, such as paths, mappings.
 """
 import pathlib
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Tuple
 from dataclasses import dataclass
 import time
 from faker import Faker
@@ -91,7 +66,7 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
     prefix: str = ""
     start_year: int = get_start_year_of(nth)
     end_year: int = get_end_year_of(nth)
-    # Remember to turn '9' to '09', etc
+    # Turning '9' to '09', 6 to '06' for the URL
     if nth < 10:
         prefix = "0"
     import time
@@ -114,6 +89,7 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
 @dataclass
 class Speak:
     """Dictionaries in 'subList'"""
+
     real_time: Optional[str]
     play_time: str
     speak_type: str
@@ -125,6 +101,7 @@ class Speak:
 @dataclass
 class Movie:
     """Dictionaries in 'movieList'"""
+
     real_time: Optional[str]
     play_time: str
     speak_type: str
@@ -165,14 +142,66 @@ class Conference:
 
     @property
     def vod_link(self) -> str:
+        """It's actually a method"""
         return get_conf_vod_link(self)
+
+    def get_movie_info(self) -> dict:
+        return get_conf_movie_info(self)
+
+    def get_confer_num_and_pdf_file_id(self) -> Tuple[str, str]:
+        minutes_info: dict = self.get_movie_info()["minutes"]
+        if minutes_info == "":
+            return ("", "")
+        import re
+
+        confer_num: str = (
+            re.search(r"conferNum=[^&]*", minutes_info)
+            .group(0)
+            .replace("conferNum=", "")
+        )
+        pdf_file_id: str = (
+            re.search(r"pdfFileId=[^&]*", minutes_info)
+            .group(0)
+            .replace("pdfFileId=", "")
+        )
+        return (confer_num, pdf_file_id)
+
+    @property
+    def confer_num(self) -> str:
+        """It's actually a method"""
+        minutes_info: dict = self.get_movie_info()["minutes"]
+        if minutes_info == "":
+            return ""
+        import re
+
+        return (
+            re.search(r"conferNum=[^&]*", minutes_info)
+            .group(0)
+            .replace("conferNum=", "")
+        )
+
+    @property
+    def pdf_file_id(self) -> str:
+        """It's actually a method"""
+        minutes_info: dict = self.get_movie_info()["minutes"]
+        if minutes_info == "":
+            return ""
+        import re
+
+        return (
+            re.search(r"pdfFileId=[^&]*", minutes_info)
+            .group(0)
+            .replace("pdfFileId=", "")
+        )
 
     @property
     def movie_list(self) -> list:
+        """It's actually a method"""
         return get_conf_vod_chunks(self)
 
     @property
     def movie_sublist(self) -> list:
+        """It's actually a method"""
         result: list = []
         for movie in self.movie_list:
             for chunk in movie["subList"]:
@@ -181,6 +210,7 @@ class Conference:
 
     @property
     def pdf(self) -> Optional[bytes]:
+        """It's actually a method"""
         return get_conf_pdf(self)
 
     def save_pdf_to(self, path: str) -> None:
@@ -557,5 +587,3 @@ class MPList:
 
     def __iter__(self):
         return iter(self.members)
-
-
