@@ -32,6 +32,8 @@
   - cls&nbsp;&nbsp;&nbsp;[Conferences](https://github.com/anzhi0708/dearAJ#conferences)
   - cls&nbsp;&nbsp;&nbsp;[MP](https://github.com/anzhi0708/dearAJ#mplist)
   - cls&nbsp;&nbsp;&nbsp;[MPList](https://github.com/anzhi0708/dearAJ#mplist)
+  - exc&nbsp;&nbsp;&nbsp;ConfMovieInfoIsNone
+  - exc&nbsp;&nbsp;&nbsp;ConfMovieInfoIsEmptyString
 - [License](https://github.com/anzhi0708/dearAJ#license)
 
 ## Install

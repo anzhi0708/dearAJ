@@ -96,15 +96,14 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
     import requests
     import json
 
-    return json.loads(
-        requests.get(
-            url,
-            headers={
-                "Accept": "application/json, text/javascript, */*; q=0.01",
-                "User-Agent": Faker().user_agent(),
-            },
-        ).text
+    respond = requests.get(
+        url,
+        headers={
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "User-Agent": Faker().user_agent(),
+        },
     )
+    return json.loads(respond.text)
 
 
 @dataclass
@@ -484,13 +483,14 @@ def get_conf_movie_info(conf: Conference) -> dict:
     import json
     import requests
 
-    received_json_string: str = requests.get(
+    respond = requests.get(
         movie_info_link,
         headers={
             "Accept": "application/json, text/javascript, */*; q=0.01",
             "User-Agent": Faker().user_agent(),
         },
-    ).text
+    )
+    received_json_string: str = respond.text
 
     if received_json_string is None:
         raise ConfMovieInfoIsNone
@@ -507,15 +507,15 @@ def get_conf_file_info(conf: Conference) -> dict:
     import json
     import requests
 
-    return json.loads(
-        requests.get(
-            file_info_link,
-            headers={
-                "Accept": "application/json, text/javascript, */*; q=0.01",
-                "User-Agent": Faker().user_agent(),
-            },
-        ).text
+    respond = requests.get(
+        file_info_link,
+        headers={
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "User-Agent": Faker().user_agent(),
+        },
     )
+    received_json_string: str = respond.txt
+    return json.loads(received_json_string)
 
 
 def get_conf_movies(conf: Conference) -> List[Movie]:
