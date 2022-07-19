@@ -151,48 +151,54 @@ class Conference:
     def get_confer_num_and_pdf_file_id(self) -> Tuple[str, str]:
         minutes_info: dict = self.get_movie_info()["minutes"]
         if minutes_info == "":
+            from sys import stderr
+
+            print(
+                f"This conference\n{self.conf_title}\nhas no valid PDF link, check this link\n{self.vod_link}\nfor more information.\n",
+                file=stderr,
+            )
             return ("", "")
         import re
 
-        confer_num: str = (
-            re.search(r"conferNum=[^&]*", minutes_info)
-            .group(0)
-            .replace("conferNum=", "")
-        )
-        pdf_file_id: str = (
-            re.search(r"pdfFileId=[^&]*", minutes_info)
-            .group(0)
-            .replace("pdfFileId=", "")
-        )
+        try:
+            confer_num: str = (
+                re.search(r"conferNum=[^&]*", minutes_info)
+                .group(0)
+                .replace("conferNum=", "")
+            )
+        except:
+            confer_num: str = ""
+            from sys import stderr
+
+            print(
+                f"confer number not found\n{self.conf_title}\nhas no valid confer number, check this link\n{self.vod_link}\nfor details.\n",
+                file=stderr,
+            )
+        try:
+            pdf_file_id: str = (
+                re.search(r"pdfFileId=[^&]*", minutes_info)
+                .group(0)
+                .replace("pdfFileId=", "")
+            )
+        except:
+            pdf_file_id: str = ""
+            from sys import stderr
+
+            print(
+                f"pdf id not found\n{self.conf_title}\nhas no valid pdf ID, check this link\n{self.vod_link}\nfor details.\n",
+                file=stderr,
+            )
         return (confer_num, pdf_file_id)
 
     @property
     def confer_num(self) -> str:
         """It's actually a method"""
-        minutes_info: dict = self.get_movie_info()["minutes"]
-        if minutes_info == "":
-            return ""
-        import re
-
-        return (
-            re.search(r"conferNum=[^&]*", minutes_info)
-            .group(0)
-            .replace("conferNum=", "")
-        )
+        return self.get_confer_num_and_pdf_file_id()[0]
 
     @property
     def pdf_file_id(self) -> str:
         """It's actually a method"""
-        minutes_info: dict = self.get_movie_info()["minutes"]
-        if minutes_info == "":
-            return ""
-        import re
-
-        return (
-            re.search(r"pdfFileId=[^&]*", minutes_info)
-            .group(0)
-            .replace("pdfFileId=", "")
-        )
+        return self.get_confer_num_and_pdf_file_id()[1]
 
     def get_movie_list(self) -> List[Movie]:
         return get_conf_vod_chunks(self)
