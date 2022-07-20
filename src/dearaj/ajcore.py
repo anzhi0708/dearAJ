@@ -35,6 +35,7 @@ GEN_PERIOD_DICT: dict = {
 }
 
 
+
 class GetConfMovieInfoError(Exception):
     pass
 
@@ -96,14 +97,23 @@ def get_normal_page_of(nth: int, page: int = 1) -> dict:
     import requests
     import json
 
-    respond = requests.get(
+    response = requests.get(
         url,
         headers={
             "Accept": "application/json, text/javascript, */*; q=0.01",
             "User-Agent": Faker().user_agent(),
         },
     )
-    return json.loads(respond.text)
+
+    while response.ok is False:
+        response = requests.get(
+            url,
+            headers={
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "User-Agent": Faker().user_agent(),
+            },
+        )
+    return json.loads(response.text)
 
 
 @dataclass
@@ -188,6 +198,9 @@ class Conference:
     conf_title: str
     comm_name: str
     qvod: int
+
+    def get_local_csv_file_name(self):
+        return f"{self.date}_gen{self.ct1}.{self.ct2}.{self.ct3}.{self.mc}_{self.open_time}({len(self.movies)}movies).csv"
 
     @property
     def vod_link(self) -> str:
@@ -321,7 +334,7 @@ class Conference:
 
         with open(
             LOCAL_DATA_PATH
-            / f"{self.ct1}.{self.ct2}.{self.ct3}_{len(self.movies)}movies_mc={self.mc}.csv",
+            / self.get_local_csv_file_name(),
             "w",
         ) as output:
             writer = csv.writer(output)
@@ -483,14 +496,22 @@ def get_conf_movie_info(conf: Conference) -> dict:
     import json
     import requests
 
-    respond = requests.get(
+    response = requests.get(
         movie_info_link,
         headers={
             "Accept": "application/json, text/javascript, */*; q=0.01",
             "User-Agent": Faker().user_agent(),
         },
     )
-    received_json_string: str = respond.text
+    while response.ok is False:
+        response = requests.get(
+            movie_info_link,
+            headers={
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "User-Agent": Faker().user_agent(),
+            },
+        )
+    received_json_string: str = response.text
 
     if received_json_string is None:
         raise ConfMovieInfoIsNone

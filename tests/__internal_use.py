@@ -14,11 +14,22 @@ print(dir(ajcore))
 
 print(ajcore.LOCAL_DATA_PATH)
 
-for n in range(17, 21):
+
+def get(n):
+    count: int = 0
     for conf in ajcore.Conferences(n):
         print(" ")
         print(f"{conf.vod_link}")
         print(f"getting {conf.date} {conf.conf_title}... ", end='')
         conf.to_csv_from_original_raw_json_data()
+        count += 1
         print('done\n')
-        time.sleep(1)
+        time.sleep(0.2)
+    print(f"\nTOTAL: {count}")
+
+
+if __name__ == '__main__':
+    import sys
+    nth: int = sys.argv[1]
+    get(nth)
+
