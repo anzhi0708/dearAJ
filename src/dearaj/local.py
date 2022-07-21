@@ -171,6 +171,9 @@ class Conference:
     def movies(self) -> list:
         return self.movie_list
 
+    def __iter__(self):
+        return iter(self.movies)
+
 
 class Conferences:
     """Load data from local disk"""

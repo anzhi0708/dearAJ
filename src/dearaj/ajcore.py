@@ -210,9 +210,8 @@ class Movie:
             }
         )
 
-    @staticmethod
-    def load_from_conf():
-        raise NotImplementedError
+    def __iter__(self):
+        return iter(self.sublist)
 
 
 class Local:
