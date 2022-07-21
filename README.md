@@ -19,20 +19,19 @@
 
 - [Installation](https://github.com/anzhi0708/dearAJ#install)
 - [Usage](https://github.com/anzhi0708/dearAJ#usage)
-  - mod&nbsp;&nbsp;&nbsp;&nbsp;core
   
-    <details>
+<details><summary>mod 'core'</summary>
     
-    - cls&nbsp;&nbsp;&nbsp;&nbsp;[MP](https://github.com/anzhi0708/dearAJ#mplist)
-    - cls&nbsp;&nbsp;&nbsp;&nbsp;[MPList](https://github.com/anzhi0708/dearAJ#mplist)
-    - cls&nbsp;&nbsp;&nbsp;&nbsp;[Speak](https://github.com/anzhi0708/dearAJ#speak)
-    - cls&nbsp;&nbsp;&nbsp;&nbsp;[Movie](https://github.com/anzhi0708/dearAJ#movie)
-    - cls&nbsp;&nbsp;&nbsp;&nbsp;Conference
-    - cls&nbsp;&nbsp;&nbsp;&nbsp;Conferences
+  - cls&nbsp;&nbsp;&nbsp;&nbsp;[MP](https://github.com/anzhi0708/dearAJ#mplist)
+  - cls&nbsp;&nbsp;&nbsp;&nbsp;[MPList](https://github.com/anzhi0708/dearAJ#mplist)
+  - cls&nbsp;&nbsp;&nbsp;&nbsp;[Speak](https://github.com/anzhi0708/dearAJ#speak)
+  - cls&nbsp;&nbsp;&nbsp;&nbsp;[Movie](https://github.com/anzhi0708/dearAJ#movie)
+  - cls&nbsp;&nbsp;&nbsp;&nbsp;Conference
+  - cls&nbsp;&nbsp;&nbsp;&nbsp;Conferences
     
-    </details>
+</details>
 
-  - mod&nbsp;&nbsp;&nbsp;&nbsp;local
+  - mod&nbsp;&nbsp;&nbsp;&nbsp;`local`
     - cls&nbsp;&nbsp;&nbsp;&nbsp;[Conference](https://github.com/anzhi0708/dearAJ#conferences)
     - cls&nbsp;&nbsp;&nbsp;&nbsp;[Conferences](https://github.com/anzhi0708/dearAJ#conferences)
 - [License](https://github.com/anzhi0708/dearAJ#license)
