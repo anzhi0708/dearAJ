@@ -24,8 +24,8 @@
     - [MPList](https://github.com/anzhi0708/dearAJ#mplist)
     - [Speak](https://github.com/anzhi0708/dearAJ#speak)
     - [Movie](https://github.com/anzhi0708/dearAJ#movie)
-    - `Conference`
-    - `Conferences`
+    - Conference
+    - Conferences
   - mod `local`
     - [Conference](https://github.com/anzhi0708/dearAJ#conferences)
     - [Conferences](https://github.com/anzhi0708/dearAJ#conferences)
@@ -85,8 +85,8 @@ A `Movie` object contains multuple `Speak`s, and other meta info. Sometimes a si
 
 ```python
 >>> for conf in Conferences(10):
-...     for movie in conf.movies:
-...             for speak in movie.sublist:
+...     for movie in conf:
+...             for speak in movie:
 ...                     print(speak)
 ...     break
 ...
