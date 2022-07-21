@@ -8,6 +8,42 @@ from dataclasses import dataclass
 import time
 from faker import Faker
 
+__all__ = [
+    'CONFIG_FILE_DIR',
+    'CONGRESSMAN_DIR',
+    'ConfLoadError',
+    'ConfMovieInfoIsEmptyString',
+    'ConfMovieInfoIsNone',
+    'ConferNumError',
+    'Conference',
+    'Conferences',
+    'DATA_FILES_PATH',
+    'EmptyCSVFile',
+    'GEN_PERIOD_DICT',
+    'GetConfMovieInfoError',
+    'LOCAL_DATA_PATH',
+    'Local',
+    'MP',
+    'MPList',
+    'Movie',
+    'PACKAGE_ABS_DIR',
+    'PdfFileIdError',
+    'Speak',
+    'get_conf_file_info',
+    'get_conf_movie_info',
+    'get_conf_movies',
+    'get_conf_pdf',
+    'get_conf_pdf_link',
+    'get_conf_vod_link',
+    'get_conferences_of',
+    'get_end_of',
+    'get_end_year_of',
+    'get_normal_page_of',
+    'get_start_of',
+    'get_start_year_of',
+    'suffix_of'
+]
+
 CONFIG_FILE_DIR: pathlib.Path = pathlib.Path(__file__)
 PACKAGE_ABS_DIR: pathlib.Path = CONFIG_FILE_DIR.parent
 DATA_FILES_PATH: pathlib.Path = PACKAGE_ABS_DIR / "data"
@@ -35,7 +71,6 @@ GEN_PERIOD_DICT: dict = {
 }
 
 
-
 class GetConfMovieInfoError(Exception):
     pass
 
@@ -53,6 +88,14 @@ class ConferNumError(Exception):
 
 
 class PdfFileIdError(Exception):
+    pass
+
+
+class EmptyCSVFile(Exception):
+    pass
+
+
+class ConfLoadError(Exception):
     pass
 
 
@@ -167,6 +210,32 @@ class Movie:
             }
         )
 
+    @staticmethod
+    def load_from_conf():
+        raise NotImplementedError
+
+
+class Local:
+
+    def __init__(self):
+        self._files = list(LOCAL_DATA_PATH.glob("*_gen*.*.*.*(*movies).csv"))
+        self._number = len(self._files)
+
+    @property
+    def files(self) -> list:
+        return self._files
+
+    @property
+    def number(self) -> int:
+        return self._number
+
+    @property
+    def path(self) -> str:
+        return str(LOCAL_DATA_PATH)
+
+
+Local = Local()
+
 
 @dataclass
 class Conference:
@@ -200,7 +269,7 @@ class Conference:
     qvod: int
 
     def get_local_csv_file_name(self):
-        return f"{self.date}_gen{self.ct1}.{self.ct2}.{self.ct3}.{self.mc}_{self.open_time}({len(self.movies)}movies).csv"
+        return f"{self.date}_gen{self.ct1}.{self.ct2}.{self.ct3}.{self.mc}_{self.open_time}({len(self.get_movies())}movies).csv"
 
     @property
     def vod_link(self) -> str:
@@ -265,10 +334,45 @@ class Conference:
     def get_movie_list(self) -> List[Movie]:
         return get_conf_movies(self)
 
-    @property
-    def movies(self) -> List[Movie]:
+    def get_movies(self) -> List[Movie]:
         """This is actually a sweet function"""
         return self.get_movie_list()
+
+    '''
+    @staticmethod
+    def load(nth: int) -> Optional[List['Conference']]:
+        """Loads conferences from local data"""
+        local_conf_csv_files: list = []
+        result: List[Conference] = []
+        for file in Local.files:
+            if f"gen{nth}" in str(file):
+                local_conf_csv_files.append(file.absolute())
+        import csv
+        import json
+        for conf_csv_file in local_conf_csv_files:
+            with open(conf_csv_file, "r") as conf_csv_raw_json:
+                reader = csv.reader(conf_csv_raw_json)
+                for line in reader:
+                    conf_raw_data = json.loads(line[0])
+                    conf: Conference = Conference(
+                        conf_raw_data['sami'],
+                        conf_raw_data['type'],
+                        conf_raw_data['minutes'],
+                        conf_raw_data['ct1'],
+                        conf_raw_data['ct2'],
+                        conf_raw_data['ct3'],
+                        conf_raw_data['confOpenTime'],
+                        conf_raw_data['confDate'],
+                        conf_raw_data['handlang'],
+                        conf_raw_data['mc'],
+                        conf_raw_data['confTitle'],
+                        # conf_raw_data['commName'],
+                        "commName not supported",
+                        conf_raw_data['qvod'],
+                    )
+                    result.append(conf)
+        return result
+    '''
 
     def get_movie_sublist(self) -> List[Speak]:
         result: List[Speak] = []
@@ -333,8 +437,7 @@ class Conference:
         import csv
 
         with open(
-            LOCAL_DATA_PATH
-            / self.get_local_csv_file_name(),
+            LOCAL_DATA_PATH / self.get_local_csv_file_name(),
             "w",
         ) as output:
             writer = csv.writer(output)
