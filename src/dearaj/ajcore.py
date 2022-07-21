@@ -167,7 +167,7 @@ class Speak:
     play_time: str
     speak_type: str
     no: int
-    movie_title: str
+    speak_title: str
     wv: int
 
     @property
@@ -180,7 +180,7 @@ class Speak:
                 "play_time": self.play_time,
                 "speak_type": self.speak_type,
                 "no": self.no,
-                "movie_title": self.movie_title,
+                "speak_title": self.speak_title,
                 "wv": self.wv,
             }
         )
