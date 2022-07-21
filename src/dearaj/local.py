@@ -178,11 +178,12 @@ class Conferences:
 
     def __init__(self, nth: int):
         self.generation: int = nth
+        suffix: str = "" if self.generation > 9 else "0"
         # print(len(core.Local.files))
         print("Loading data... ", end="", flush=True)
         self.files = []
         for file in core.Local.files:
-            if f"gen{nth}" in str(file):
+            if f"gen{suffix}{nth}" in str(file):
                 self.files.append(file)
         self.conferences = []
         import csv
