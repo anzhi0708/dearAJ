@@ -65,14 +65,22 @@ class Conference:
 
     def __repr__(self) -> str:
         _type: str = "" if self.type in (None, "") else f" <{self.type}> "
-        return f"<{self.date}, {self.open_time}, {self.week}, {self.title}{_type}({len(self.movie_list)} movies)>"
+        return f"<{self.date}, {self.open_time}, {self.week}, {self.title}{_type}({len(self.movies)} movies)>"
 
     @property
     def vod_link(self) -> str:
         return get_conf_vod_link(self)
 
     @property
-    def confer_num_and_pdf_file_id(self) -> tuple:
+    def local_csv_file_name(self) -> str:
+        return f"{self.date}_gen{self.ct1}.{self.ct2}.{self.ct3}.{self.mc}_{self.open_time}({len(self.movies)}movies).csv"
+
+    @property
+    def default_file_name(self) -> str:
+        return self.local_csv_file_name.replace(".csv", "")
+
+    @property
+    def confer_num_and_pdf_file_id(self) -> tuple[str, str]:
         pdf_link = self.minutes
         if pdf_link in ("", None):
             from sys import stderr
@@ -121,6 +129,16 @@ class Conference:
     @property
     def pdf_file_id(self) -> str:
         return self.confer_num_and_pdf_file_id[1]
+
+    def download_pdf(self, to: str = ".") -> bool:
+        """
+        Downloads pdf file to some path, defaults to '.'
+        returns True if succeed, else False
+        """
+        with open(f"{to}/{self.default_file_name}.pdf", "wb") as output_pdf:
+            output_pdf.write(self.pdf)
+            return True
+        return False
 
     @property
     def pdf(self) -> bytes:
@@ -221,10 +239,11 @@ class Conferences:
                             current_raw_data['confTitle'],
                             current_raw_data['angun'],
                             current_raw_data['qvod'],
-                        # )
                     )
                     self.conferences.append(current_conf)
+        import os
         print("Done.\r", end="")
+        print(" " * os.get_terminal_size().columns + "\r", end="")
 
     def __iter__(self):
         return iter(self.conferences)
