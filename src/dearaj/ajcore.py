@@ -338,42 +338,6 @@ class Conference:
         """This is actually a sweet function"""
         return self.get_movie_list()
 
-    '''
-    @staticmethod
-    def load(nth: int) -> Optional[List['Conference']]:
-        """Loads conferences from local data"""
-        local_conf_csv_files: list = []
-        result: List[Conference] = []
-        for file in Local.files:
-            if f"gen{nth}" in str(file):
-                local_conf_csv_files.append(file.absolute())
-        import csv
-        import json
-        for conf_csv_file in local_conf_csv_files:
-            with open(conf_csv_file, "r") as conf_csv_raw_json:
-                reader = csv.reader(conf_csv_raw_json)
-                for line in reader:
-                    conf_raw_data = json.loads(line[0])
-                    conf: Conference = Conference(
-                        conf_raw_data['sami'],
-                        conf_raw_data['type'],
-                        conf_raw_data['minutes'],
-                        conf_raw_data['ct1'],
-                        conf_raw_data['ct2'],
-                        conf_raw_data['ct3'],
-                        conf_raw_data['confOpenTime'],
-                        conf_raw_data['confDate'],
-                        conf_raw_data['handlang'],
-                        conf_raw_data['mc'],
-                        conf_raw_data['confTitle'],
-                        # conf_raw_data['commName'],
-                        "commName not supported",
-                        conf_raw_data['qvod'],
-                    )
-                    result.append(conf)
-        return result
-    '''
-
     def get_movie_sublist(self) -> List[Speak]:
         result: List[Speak] = []
         for movie in self.get_movie_list():

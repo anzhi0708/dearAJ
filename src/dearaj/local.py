@@ -3,7 +3,7 @@ This module provides functions and classes for performing
 operations on local csv data files.
 """
 import ajcore as core
-from ajcore import MP, MPList, Movie, Speak
+from ajcore import MP, MPList, Movie, Speak, get_conf_vod_link
 
 __all__ = [
     "core",
@@ -51,7 +51,7 @@ class Conference:
         self.ct3: str = ct3
         self.menu: str = menu
         self.type: str = type
-        self.movie_list: list[dict] = movie_list
+        self.movie_list: list = movie_list
         self.open_time: str = open_time
         self.week: str = week
         self.hand_lang: str = hand_lang
@@ -63,13 +63,105 @@ class Conference:
         self.angun: list[dict] = angun
         self.qvod: int = qvod
 
+    def __repr__(self) -> str:
+        _type: str = "" if self.type in (None, "") else f" <{self.type}> "
+        return f"<{self.date}, {self.open_time}, {self.week}, {self.title}{_type}({len(self.movie_list)} movies)>"
+
+    @property
+    def vod_link(self) -> str:
+        return get_conf_vod_link(self)
+
+    @property
+    def confer_num_and_pdf_file_id(self) -> tuple:
+        pdf_link = self.minutes
+        if pdf_link in ("", None):
+            from sys import stderr
+
+            print(
+                f"This conference:\n{self.title!r}\nhas no valid PDF link, check\n{self.vod_link}\nfor details.",
+                file=stderr,
+            )
+            return ("", "")
+        import re
+
+        try:
+            confer_num: str = (
+                re.search(r"conferNum=[^&]*", pdf_link)
+                .group(0)
+                .replace("conferNum=", "")
+            )
+        except:
+            confer_num: str = ""
+            from sys import stderr
+
+            print(
+                f"confer number not found\n{self.title!r}\n{pdf_link!r}\nhas no valid confer number, check\n{self.vod_link}\nfor details.",
+                file=stderr,
+            )
+        try:
+            pdf_file_id: str = (
+                re.search(r"pdfFileId=[^&]*", pdf_link)
+                .group(0)
+                .replace("pdfFileId=", "")
+            )
+        except:
+            pdf_file_id: str = ""
+            from sys import stderr
+
+            print(
+                f"pdf id not found\n{self.conf_title!r}\n{pdf_link!r}\nhas no valid pdf ID, check\n{self.vod_link}\nfor details.",
+                file=stderr,
+            )
+        return (confer_num, pdf_file_id)
+
+    @property
+    def confer_num(self) -> str:
+        return self.confer_num_and_pdf_file_id[0]
+
+    @property
+    def pdf_file_id(self) -> str:
+        return self.confer_num_and_pdf_file_id[1]
+
+    @property
+    def pdf(self) -> bytes:
+        """Returns PDF raw bytes data"""
+        action: str = "http://likms.assembly.go.kr/record/mhs-10-040-0040.do"
+        import requests
+        from faker import Faker
+        # # # # # # # # # # #
+        # HTTP POST method  #
+        # # # # # # # # # # #
+        respond = requests.post(
+            action,
+            data={
+                "target": "I_TARGET",
+                "enctype": "multipart/form-data",
+                "conferNum": self.confer_num,
+                "fileId": self.pdf_file_id,
+            },
+            headers={
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "User-Agent": Faker().user_agent(),
+            },
+        )
+        # # # # # # # # # # # #
+        # returns binary data #
+        # # # # # # # # # # # #
+        return respond.content
+
+    @property
+    def movies(self) -> list:
+        return self.movie_list
+
 
 class Conferences:
     """Load data from local disk"""
-    __slots__ = "files", "conferences"
+    __slots__ = "generation", "files", "conferences"
 
     def __init__(self, nth: int):
-        print(len(core.Local.files))
+        self.generation: int = nth
+        # print(len(core.Local.files))
+        print("Loading data... ", end="", flush=True)
         self.files = []
         for file in core.Local.files:
             if f"gen{nth}" in str(file):
@@ -132,6 +224,10 @@ class Conferences:
                         # )
                     )
                     self.conferences.append(current_conf)
+        print("Done.\r", end="")
 
     def __iter__(self):
         return iter(self.conferences)
+
+    def __repr__(self) -> str:
+        return f"<class '{self.generation}{core.suffix_of(self.generation)} Assembly conferences' ({len(self.conferences)} local records in {str(core.LOCAL_DATA_PATH)!r})>"

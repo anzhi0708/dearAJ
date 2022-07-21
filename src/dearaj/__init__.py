@@ -5,8 +5,6 @@ MODULE_PATH = pathlib.Path(__file__).parent.absolute()
 
 sys.path.append(str(MODULE_PATH))
 
-print(sys.path)
-
 from local import *
 
 
