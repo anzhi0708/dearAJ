@@ -22,10 +22,9 @@
   - mod `core`  
     - [MP](https://github.com/anzhi0708/dearAJ#mplist)
     - [MPList](https://github.com/anzhi0708/dearAJ#mplist)
+    - Assembly - alias for `MPList`
     - [Speak](https://github.com/anzhi0708/dearAJ#speak)
     - [Movie](https://github.com/anzhi0708/dearAJ#movie)
-    - Conference
-    - Conferences
   - mod `local`
     - [Conference](https://github.com/anzhi0708/dearAJ#conferences)
     - [Conferences](https://github.com/anzhi0708/dearAJ#conferences)
