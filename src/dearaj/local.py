@@ -3,12 +3,13 @@ This module provides functions and classes for performing
 operations on local csv data files.
 """
 import ajcore as core
-from ajcore import MP, MPList, Movie, Speak, get_conf_vod_link
+from ajcore import MP, MPList, Assembly, Movie, Speak, get_conf_vod_link
 
 __all__ = [
     "core",
     "MP",
     "MPList",
+    "Assembly",
     "Conference",
     "Conferences",
     "Movie",

@@ -25,6 +25,7 @@ __all__ = [
     'Local',
     'MP',
     'MPList',
+    'Assembly',
     'Movie',
     'PACKAGE_ABS_DIR',
     'PdfFileIdError',
@@ -786,8 +787,23 @@ class MPList:
                 result.append(mp.party)
         return result
 
+    @property
+    def females(self) -> List[MP]:
+        return [mp for mp in self.members if mp.is_female]
+
+    @property
+    def males(self) -> List[MP]:
+        return [mp for mp in self.members if mp.is_male]
+
     def __repr__(self):
         return f"{self.__class__.__name__}(male={self.male}, female={self.female}, total={self.total})"
 
     def __iter__(self):
         return iter(self.members)
+
+    def __eq__(self, target):
+        return self.generation == target.generation and self.members == target.members
+
+
+# Syntax sugar ?
+Assembly = MPList

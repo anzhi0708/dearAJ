@@ -16,6 +16,7 @@ __all__ = [
     "Conferences",
     "MP",
     "MPList",
+    "Assembly",
     "Speak",
     "Movie"
 ]
