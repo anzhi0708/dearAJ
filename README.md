@@ -19,15 +19,13 @@
 
 - [Installation](https://github.com/anzhi0708/dearAJ#install)
 - [Usage](https://github.com/anzhi0708/dearAJ#usage)
-  - mod `core`  
-    - [MP](https://github.com/anzhi0708/dearAJ#mplist)
-    - [Assembly](https://github.com/anzhi0708/dearAJ#assembly)
-    - [Speak](https://github.com/anzhi0708/dearAJ#speak)
-    - [Movie](https://github.com/anzhi0708/dearAJ#movie)
-  - mod `local`
-    - [Conference](https://github.com/anzhi0708/dearAJ#conferences)
-    - [Conferences](https://github.com/anzhi0708/dearAJ#conferences)
-    - [period](https://github.com/anzhi0708/dearAJ#period)
+  - [MP](https://github.com/anzhi0708/dearAJ#assembly)
+  - [Assembly](https://github.com/anzhi0708/dearAJ#assembly)
+  - [Speak](https://github.com/anzhi0708/dearAJ#speak)
+  - [Movie](https://github.com/anzhi0708/dearAJ#movie)
+  - [Conference](https://github.com/anzhi0708/dearAJ#conferences)
+  - [Conferences](https://github.com/anzhi0708/dearAJ#conferences)
+  - [period](https://github.com/anzhi0708/dearAJ#period)
 - [License](https://github.com/anzhi0708/dearAJ#license)
 
 ## Install
