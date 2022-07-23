@@ -14,7 +14,8 @@ __all__ = [
     "Conference",
     "Conferences",
     "Movie",
-    "Speak"
+    "Speak",
+    "period"
 ]
 
 
@@ -173,6 +174,62 @@ class Conference:
     def movies(self) -> list:
         return self.movie_list
 
+    @staticmethod
+    def from_local_file(path: str) -> 'Conference':
+        """Opens local file and turns it into a Conference class"""
+        import csv
+        import json
+        with open(path, "r") as local_file_fp:
+            reader = csv.reader(local_file_fp)
+            for line in reader:
+                current_raw_data: dict = json.loads(line[0])
+                current_conf_movies_dict_data_list: list = current_raw_data['movieList']
+                current_conf_movies_list: list = []
+                for current_movie in current_conf_movies_dict_data_list:
+                    current_movie_speak_list: list = current_movie.get('subList')
+                    current_conf_movies_list.append(
+                        Movie(
+                            current_movie.get('realTime'),
+                            current_movie['playTime'],
+                            current_movie['speakType'],
+                            current_movie['no'],
+                            [
+                                Speak(
+                                    d.get('realTime'),
+                                    d.get('playTime'),
+                                    d.get('speakType'),
+                                    d.get('no'),
+                                    d.get('movieTitle'),
+                                    d.get('wv')
+                                )
+                                for d in current_movie_speak_list
+                            ] if current_movie_speak_list is not None else []
+                        )
+                    )
+                current_conf = Conference(
+                        current_raw_data['angunBase'],
+                        current_raw_data['sami'],
+                        current_raw_data['minutes'],
+                        current_raw_data['ct1'],
+                        current_raw_data['ct2'],
+                        current_raw_data['ct3'],
+                        current_raw_data['menu'],
+                        current_raw_data['type'],
+                        # current_raw_data['movieList'],
+                        current_conf_movies_list,
+                        current_raw_data['confOpenTime'],
+                        current_raw_data['confWeek'],
+                        current_raw_data['handlang'],
+                        current_raw_data['confDate'],
+                        current_raw_data['mc'],
+                        current_raw_data['munitesType'],
+                        current_raw_data['audioService'],
+                        current_raw_data['confTitle'],
+                        current_raw_data['angun'],
+                        current_raw_data['qvod'],
+                )
+                return current_conf
+
     def __iter__(self):
         return iter(self.movies)
 
@@ -190,68 +247,47 @@ class Conferences:
             if f"gen{suffix}{nth}" in str(file):
                 self.files.append(file)
         self.conferences = []
-        import csv
-        import json
         progress = tqdm(self.files, unit="conf")
         for file in progress:
-            with open(file, "r") as conf_file:
-                reader = csv.reader(conf_file)
-                for line in reader:
-                    current_raw_data = json.loads(line[0])
-                    # import pprint
-                    # pprint.pp(current_raw_data)
-                    # self.conferences.append(
-                    current_conf_movies_dict_data_list: list = current_raw_data['movieList']
-                    current_conf_movies_list: list = []
-                    for current_movie in current_conf_movies_dict_data_list:
-                        current_movie_speak_list: list = current_movie.get('subList')
-                        current_conf_movies_list.append(
-                            Movie(
-                                current_movie.get('realTime'),
-                                current_movie['playTime'],
-                                current_movie['speakType'],
-                                current_movie['no'],
-                                [
-                                    Speak(
-                                        d.get('realTime'),
-                                        d.get('playTime'),
-                                        d.get('speakType'),
-                                        d.get('no'),
-                                        d.get('movieTitle'),
-                                        d.get('wv')
-                                    )
-                                    for d in current_movie_speak_list
-                                ] if current_movie_speak_list is not None else []
-                            )
-                        )
-                    current_conf = Conference(
-                            current_raw_data['angunBase'],
-                            current_raw_data['sami'],
-                            current_raw_data['minutes'],
-                            current_raw_data['ct1'],
-                            current_raw_data['ct2'],
-                            current_raw_data['ct3'],
-                            current_raw_data['menu'],
-                            current_raw_data['type'],
-                            # current_raw_data['movieList'],
-                            current_conf_movies_list,
-                            current_raw_data['confOpenTime'],
-                            current_raw_data['confWeek'],
-                            current_raw_data['handlang'],
-                            current_raw_data['confDate'],
-                            current_raw_data['mc'],
-                            current_raw_data['munitesType'],
-                            current_raw_data['audioService'],
-                            current_raw_data['confTitle'],
-                            current_raw_data['angun'],
-                            current_raw_data['qvod'],
-                    )
-                    desc = f"{current_conf.title[:9] + '...'}" if len(current_conf.title) >= 9 else f"{current_conf.date}.."
-                    progress.set_description(f"{desc}")
-                    self.conferences.append(current_conf)
+            current_conf = Conference.from_local_file(file)
+            desc = f"{current_conf.title[:9] + '...'}" if len(current_conf.title) >= 9 else f"{current_conf.date}.."
+            progress.set_description(f"{desc}")
+            self.conferences.append(current_conf)
 
     def __iter__(self):
         return iter(self.conferences)
 
     def __repr__(self) -> str:
         return f"<class '{self.generation}{core.suffix_of(self.generation)} Assembly conferences' ({len(self.conferences)} local records in {str(core.LOCAL_DATA_PATH)!r})>"
+
+
+class period:
+
+    __slots__ = "files", "start", "end", "conferences"
+
+    def __init__(self, start: str, end: str):
+        import datetime
+        import time
+        self.files: list = []
+        self.conferences: list[Conference] = []
+        self.start: datetime.datetime = time.strptime(start, "%Y-%m-%d")
+        self.end: datetime.datetime = time.strptime(end, "%Y-%m-%d")
+        for file in core.Local.files:
+            filename = str(file.name)
+            filedate = filename[:10]
+            filedate = time.strptime(filedate, "%Y-%m-%d")
+            if self.start <= filedate <= self.end:
+                self.files.append(file)
+        # print(len(self.files))
+        for file in tqdm(self.files, unit="conf", desc="period"):
+            conf: Conference = Conference.from_local_file(file)
+            self.conferences.append(conf)
+
+    def __iter__(self):
+        return iter(self.conferences)
+
+    def __repr__(self) -> str:
+        import time
+        start: str = time.strftime("%Y-%m-%d", self.start)
+        end: str = time.strftime("%Y-%m-%d", self.end)
+        return f"<class 'period', {len(self.conferences)} conferences from {start} to {end}>"
