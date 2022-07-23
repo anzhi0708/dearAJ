@@ -8,7 +8,7 @@
 
 <div align="center">
 
-  [![last-commit](https://img.shields.io/github/last-commit/anzhi0708/dearAJ?style=social)](https://github.com/anzhi0708/yeongnok/commits/main)    ![pypi-version](https://img.shields.io/pypi/v/dearaj?color=blue&style=flat-square) ![license](https://img.shields.io/github/license/anzhi0708/dearAJ?color=blue&style=flat-square)    ![repo-size](https://img.shields.io/github/repo-size/anzhi0708/dearAJ?style=social)
+  [![last-commit](https://img.shields.io/github/last-commit/anzhi0708/dearAJ?style=social)](https://github.com/anzhi0708/dearAJ/commits/main)    [![pypi-version](https://img.shields.io/pypi/v/dearaj?color=blue&style=flat-square)](https://pypi.org/project/dearaj) ![license](https://img.shields.io/github/license/anzhi0708/dearAJ?color=blue&style=flat-square)    ![repo-size](https://img.shields.io/github/repo-size/anzhi0708/dearAJ?style=social)
 
 </div>
 
