@@ -192,7 +192,8 @@ class Conferences:
         self.conferences = []
         import csv
         import json
-        for file in tqdm(self.files, unit="conf"):
+        progress = tqdm(self.files, unit="conf")
+        for file in progress:
             with open(file, "r") as conf_file:
                 reader = csv.reader(conf_file)
                 for line in reader:
@@ -245,6 +246,8 @@ class Conferences:
                             current_raw_data['angun'],
                             current_raw_data['qvod'],
                     )
+                    desc = f"{current_conf.title[:9] + '...'}" if len(current_conf.title) >= 9 else f"{current_conf.date}.."
+                    progress.set_description(f"{desc}")
                     self.conferences.append(current_conf)
 
     def __iter__(self):
