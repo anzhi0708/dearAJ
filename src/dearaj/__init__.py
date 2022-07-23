@@ -18,5 +18,6 @@ __all__ = [
     "MPList",
     "Assembly",
     "Speak",
-    "Movie"
+    "Movie",
+    "period"
 ]

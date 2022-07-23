@@ -21,13 +21,13 @@
 - [Usage](https://github.com/anzhi0708/dearAJ#usage)
   - mod `core`  
     - [MP](https://github.com/anzhi0708/dearAJ#mplist)
-    - [MPList](https://github.com/anzhi0708/dearAJ#mplist)
-    - Assembly - alias for `MPList`
+    - [Assembly](https://github.com/anzhi0708/dearAJ#assembly)
     - [Speak](https://github.com/anzhi0708/dearAJ#speak)
     - [Movie](https://github.com/anzhi0708/dearAJ#movie)
   - mod `local`
     - [Conference](https://github.com/anzhi0708/dearAJ#conferences)
     - [Conferences](https://github.com/anzhi0708/dearAJ#conferences)
+    - [period](https://github.com/anzhi0708/dearAJ#period)
 - [License](https://github.com/anzhi0708/dearAJ#license)
 
 ## Install
@@ -48,17 +48,19 @@ make install
 from dearaj import *
 ```
 
-### MPList
+### Assembly
 
 Collection of single `MP`s using data from [열린국회정보](https://open.assembly.go.kr/portal/assm/search/memberHistSchPage.do).
 
 ```python
->>> MPList(20)
+>>> Assembly(20)  # The 20th National Assembly of Korea
 MPList(male=267, female=53, total=320)
+>>> MPList(20) == Assembly(20)
+True
 ```
 ```python
 >>> for mp in MPList(19):
-...     if mp.name == '문재인':
+...     if mp.name == '문재인':  # the 12th president of Korea
 ...             print(mp)
 ...
 MP(generation=19, name='문재인', party='민주통합당', committee=[], region='부산 사상구', gender='남', n='초선', how='지역구')
@@ -104,6 +106,25 @@ Speak(real_time=None, play_time='00:04:31', speak_type='기타', no=106741, spea
 ### Speak
 
 Info about some specific `MP`'s speech, such as `speak_type` etc. A `Movie` can hold multuple `Speak`s.
+
+### period
+
+```python
+>>> for conf in period("2019-01-01", "2019-03-01"):
+...     print(conf)
+...
+period: 100%|██████████████████████████████████████████████████████████████████████| 10/10 [00:00<00:00, 2813.08conf/s]
+<2019-01-09, 14:05, 수, 제365회 국회(임시회) 제04차 남북경제협력특별위원회(2 movies)>
+<2019-01-01, 00:15, 화, 제365회 국회(임시회) 제02차 국회운영위원회(1 movies)>
+<2019-01-16, 09:36, 수, 제365회 국회(임시회) 폐회중 제01차 과학기술정보방송통신위원회(1 movies)>
+<2019-01-15, 10:16, 화, 제365회 국회(임시회) 제01차 국방위원회(1 movies)>
+<2019-01-09, 10:24, 수, 제365회 국회(임시회) 제02차 행정안전위원회(1 movies)>
+<2019-01-09, 11:05, 수, 제365회 국회(임시회) 제01차 보건복지위원회(1 movies)>
+<2019-01-18, 10:03, 금, 제365회 국회(임시회) 폐회중 제02차 보건복지위원회(2 movies)>
+<2019-01-22, 14:28, 화, 제366회 국회(임시회) 제01차 문화체육관광위원회(1 movies)>
+<2019-01-21, 14:38, 월, 제366회 국회(임시회) 제01차 행정안전위원회(1 movies)>
+<2019-01-24, 10:07, 목, 제366회 국회(임시회) 제08차 정치개혁특별위원회(1 movies)>
+```
 
 ## License
 
