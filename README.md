@@ -8,7 +8,7 @@
 
 <div align="center">
 
-  [![last-commit](https://img.shields.io/github/last-commit/anzhi0708/dearAJ?style=social)](https://github.com/anzhi0708/dearAJ/commits/main)    [![pypi-version](https://img.shields.io/pypi/v/dearaj?color=blue&style=flat-square)](https://pypi.org/project/dearaj) ![license](https://img.shields.io/github/license/anzhi0708/dearAJ?color=blue&style=flat-square)    ![repo-size](https://img.shields.io/github/repo-size/anzhi0708/dearAJ?style=social) ![release](https://img.shields.io/github/v/release/anzhi0708/dearAJ?style=flat-square) ![total-lines](https://img.shields.io/tokei/lines/github/anzhi0708/dearAJ?style=flat-square) ![code-size](https://img.shields.io/github/languages/code-size/anzhi0708/dearAJ?style=flat-square)
+  [![last-commit](https://img.shields.io/github/last-commit/anzhi0708/dearAJ?style=social)](https://github.com/anzhi0708/dearAJ/commits/main)    [![pypi-version](https://img.shields.io/pypi/v/dearaj?color=blue&style=flat-square)](https://pypi.org/project/dearaj) ![license](https://img.shields.io/github/license/anzhi0708/dearAJ?color=blue&style=flat-square)    ![repo-size](https://img.shields.io/github/repo-size/anzhi0708/dearAJ?style=social) ![release](https://img.shields.io/github/v/release/anzhi0708/dearAJ?style=flat-square) ![code-size](https://img.shields.io/github/languages/code-size/anzhi0708/dearAJ?style=flat-square)
 
 </div>
 
