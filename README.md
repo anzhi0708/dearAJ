@@ -28,6 +28,12 @@
   - [period](https://github.com/anzhi0708/dearAJ#period)
 - [License](https://github.com/anzhi0708/dearAJ#license)
 
+## Features
+
+- Built-in datasets from [국회영상회의록](https://w3.assembly.go.kr/main/index.do) and [열린국회정보](https://open.assembly.go.kr/portal/mainPage.do)
+- Automatic data preprocessing that removes duplicated conference records from 국회영상회의록 website
+- Crawlers from module `ajcore` to get up-to-date conference info at anytime
+
 ## Install
 
 ```bash
