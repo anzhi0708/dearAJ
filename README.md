@@ -49,6 +49,10 @@ from dearaj import *
 ### period
 
 ```python
+>>> period("2019-01-01", "2019-03-01")
+<class 'period', 10 conferences from 2019-01-01 to 2019-03-01>
+```
+```python
 >>> for conf in period("2019-01-01", "2019-03-01"):
 ...     print(conf)
 ...
