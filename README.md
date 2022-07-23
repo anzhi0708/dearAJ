@@ -13,7 +13,7 @@
 </div>
 
 
-# dearAJ
+# dearaj
 
 **Data analysis tool for Korean National Assembly**
 
