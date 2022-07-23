@@ -8,7 +8,7 @@ sys.path.append(str(MODULE_PATH))
 from local import *
 
 
-__version__ = "0.0.8"
+__version__ = "0.0.9a1"
 
 __all__ = [
     "core",

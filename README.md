@@ -80,10 +80,16 @@ period: 100%|██████████████████████�
 Collection of single `MP`s using data from [열린국회정보](https://open.assembly.go.kr/portal/assm/search/memberHistSchPage.do).
 
 ```python
+>>> Assembly(19).has("문재인")
+True
+>>> Assembly(19).has("박근혜")
+True
+>>> Assembly(20).has("박근혜")
+False
+```
+```python
 >>> Assembly(20)  # The 20th National Assembly of Korea
 MPList(male=267, female=53, total=320)
->>> MPList(20) == Assembly(20)
-True
 ```
 ```python
 >>> for mp in Assembly(19):  # for each MP of the 19th Natioinal Assembly, search for

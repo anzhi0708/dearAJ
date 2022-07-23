@@ -68,7 +68,7 @@ class Conference:
 
     def __repr__(self) -> str:
         _type: str = "" if self.type in (None, "") else f" <{self.type}> "
-        return f"<{self.date}, {self.open_time}, {self.week}, {self.title}{_type}({len(self.movies)} movies)>"
+        return f"Conference({self.date}, {self.open_time}, {self.week}, {self.title}{_type}, {len(self.movies)} movie(s))"
 
     @property
     def vod_link(self) -> str:
@@ -174,6 +174,13 @@ class Conference:
     def movies(self) -> list:
         return self.movie_list
 
+    @property
+    def speaks(self) -> list:
+        return [speak for movie in self for speak in movie]
+
+    def has(self, name: str) -> bool:
+        return any([name in speak.title for speak in self.speaks])
+
     @staticmethod
     def from_local_file(path: str) -> 'Conference':
         """Opens local file and turns it into a Conference class"""
@@ -254,6 +261,14 @@ class Conferences:
             progress.set_description(f"{desc}")
             self.conferences.append(current_conf)
 
+    @property
+    def movies(self) -> list[Movie]:
+        return [movie for conf in self for movie in conf]
+
+    @property
+    def speaks(self) -> list[Speak]:
+        return [speak for movie in self.movies for speak in movie]
+
     def __iter__(self):
         return iter(self.conferences)
 
@@ -291,3 +306,11 @@ class period:
         start: str = time.strftime("%Y-%m-%d", self.start)
         end: str = time.strftime("%Y-%m-%d", self.end)
         return f"<class 'period', {len(self.conferences)} conferences from {start} to {end}>"
+
+    @property
+    def movies(self) -> list[Movie]:
+        return [movie for conf in self.conferences for movie in conf]
+
+    @property
+    def speaks(self) -> list[Speak]:
+        return [speak for conf in self.conferences for movie in conf for speak in movie]

@@ -186,16 +186,33 @@ class Speak:
             }
         )
 
+    @property
+    def title(self) -> str:
+        return self.speak_title
+
+    @property
+    def type(self) -> str:
+        return self.speak_type
+
+    def has(self, name: str) -> bool:
+        return name in self.title
+
+    def __repr__(self) -> str:
+        return f"Speak(<{self.type}> {self.title})"
+
+    def __str__(self) -> str:
+        return self.title
+
 
 @dataclass
 class Movie:
-    """Dictionaries in 'movieList'"""
+    """It was in 'movieList'"""
 
     real_time: Optional[str]
     play_time: str
     speak_type: str
     no: int
-    sublist: List[dict]
+    sublist: List[Union[dict, Speak]]
 
     @property
     def as_json(self) -> str:
@@ -211,8 +228,22 @@ class Movie:
             }
         )
 
+    @property
+    def type(self) -> str:
+        return self.speak_type
+
+    @property
+    def speaks(self) -> list:
+        return self.sublist
+
+    def has(self, name: str) -> bool:
+        return any([speak.has(name) for speak in self.speaks])
+
     def __iter__(self):
         return iter(self.sublist)
+
+    def __repr__(self) -> str:
+        return f"Movie({len(self.sublist)} speak(s))"
 
 
 class Local:
@@ -794,6 +825,9 @@ class MPList:
     @property
     def males(self) -> List[MP]:
         return [mp for mp in self.members if mp.is_male]
+
+    def has(self, name: str) -> bool:
+        return any([name in mp.name for mp in self])
 
     def __repr__(self):
         return f"{self.__class__.__name__}(male={self.male}, female={self.female}, total={self.total})"
