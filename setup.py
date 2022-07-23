@@ -21,7 +21,7 @@ setuptools.setup(
     description="Data analysis tool for Korean National Assembly",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=["requests", "faker"],
+    install_requires=["requests", "faker", "tqdm"],
     url="https://github.com/anzhi0708/dearAJ",
     packages=setuptools.find_packages("src"),
     package_dir={"": "src"},

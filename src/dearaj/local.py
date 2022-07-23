@@ -4,6 +4,7 @@ operations on local csv data files.
 """
 import ajcore as core
 from ajcore import MP, MPList, Assembly, Movie, Speak, get_conf_vod_link
+from tqdm import tqdm
 
 __all__ = [
     "core",
@@ -184,7 +185,6 @@ class Conferences:
         self.generation: int = nth
         suffix: str = "" if self.generation > 9 else "0"
         # print(len(core.Local.files))
-        print("Loading data... ", end="", flush=True)
         self.files = []
         for file in core.Local.files:
             if f"gen{suffix}{nth}" in str(file):
@@ -192,7 +192,7 @@ class Conferences:
         self.conferences = []
         import csv
         import json
-        for file in self.files:
+        for file in tqdm(self.files, unit="conf"):
             with open(file, "r") as conf_file:
                 reader = csv.reader(conf_file)
                 for line in reader:
@@ -246,9 +246,6 @@ class Conferences:
                             current_raw_data['qvod'],
                     )
                     self.conferences.append(current_conf)
-        import os
-        print("Done.\r", end="")
-        print(" " * os.get_terminal_size().columns + "\r", end="")
 
     def __iter__(self):
         return iter(self.conferences)
